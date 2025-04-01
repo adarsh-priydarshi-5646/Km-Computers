@@ -3,15 +3,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'About', href: '/about' },
-  { name: 'Services', href: '/services' },
-  { name: 'Education', href: '/education' },
-  { name: 'Examination', href: '/examination' },
-  { name: 'Contact', href: '/contact' },
-];
-
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -28,7 +19,6 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-8">
             <Link to="/" className="text-neutral-300 hover:text-white transition-colors">Home</Link>
             <Link to="/education" className="text-neutral-300 hover:text-white transition-colors">Education</Link>
-            <Link to="/examination" className="text-neutral-300 hover:text-white transition-colors">Examination</Link>
             <Link to="/laptops" className="text-neutral-300 hover:text-white transition-colors">Laptops</Link>
             <Link to="/services" className="text-neutral-300 hover:text-white transition-colors">Services</Link>
             <Link to="/about" className="text-neutral-300 hover:text-white transition-colors">About</Link>
@@ -58,7 +48,6 @@ export default function Navbar() {
             <div className="px-4 py-4 space-y-4">
               <Link to="/" className="block text-neutral-300 hover:text-white transition-colors">Home</Link>
               <Link to="/education" className="block text-neutral-300 hover:text-white transition-colors">Education</Link>
-              <Link to="/examination" className="block text-neutral-300 hover:text-white transition-colors">Examination</Link>
               <Link to="/laptops" className="block text-neutral-300 hover:text-white transition-colors">Laptops</Link>
               <Link to="/services" className="block text-neutral-300 hover:text-white transition-colors">Services</Link>
               <Link to="/about" className="block text-neutral-300 hover:text-white transition-colors">About</Link>

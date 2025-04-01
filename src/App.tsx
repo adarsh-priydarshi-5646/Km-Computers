@@ -16,7 +16,6 @@ import { CartProvider } from './context/CartContext';
 import { FiltersProvider } from './context/FiltersContext';
 import AboutPage from './pages/AboutPage';
 import { AuthProvider } from './contexts/AuthContext';
-import ExaminationPage from './pages/ExaminationPage';
 
 function App() {
   return (
@@ -55,7 +54,6 @@ function App() {
                   <Route path="/checkout" element={<CheckoutPage />} />
                   <Route path="/admin" element={<AdminPage />} />
                   <Route path="/about" element={<AboutPage />} />
-                  <Route path="/examination" element={<ExaminationPage />} />
                 </Routes>
               </main>
               <Footer />

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { BookOpen, FileText, PlayCircle, HelpCircle, CheckCircle2, ArrowRight, Clock, Download, Cpu, Monitor, HardDrive, Wifi, Shield, Zap, Award, Bookmark, ChevronDown, ChevronUp, Lightbulb, Smartphone, Server, Database, PenTool } from 'lucide-react';
+import { BookOpen, FileText, PlayCircle, HelpCircle, CheckCircle2, ArrowRight, Clock, Download, Cpu, Monitor, HardDrive, Wifi, Shield, Zap, Award, Bookmark, ChevronDown, ChevronUp, Lightbulb, Smartphone, Server, Database,PenTool } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // Quiz type definitions
@@ -22,16 +22,6 @@ export default function EducationPage() {
   
   // State for hardware guides
   const [openHardwareGuide, setOpenHardwareGuide] = useState<number | null>(null as number | null);
-  
-  // State for exam system
-  const [showExamSystem, setShowExamSystem] = useState(false);
-  const [showCertificate, setShowCertificate] = useState(false);
-  const [certificateData, setCertificateData] = useState({
-    studentName: '',
-    courseName: '',
-    score: 0,
-    completionDate: ''
-  });
   
   // Quiz questions
   const quizQuestions: QuizQuestion[] = [
