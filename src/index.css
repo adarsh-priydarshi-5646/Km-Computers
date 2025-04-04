@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-gradient-to-r from-[#0D0D0D] to-[#3A1C71] text-white font-inter min-h-screen;
+}
+
+.glass-card {
+  @apply bg-neutral-900/50 backdrop-blur-sm border border-neutral-800 rounded-xl;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-neutral-900 text-white;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-800;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neutral-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neutral-500;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-poppins;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 bg-yellow-400 text-black font-semibold rounded-lg hover:bg-yellow-300 transition-all duration-300 inline-flex items-center gap-2;
+  }
+  
+  .btn-secondary {
+    @apply px-6 py-3 bg-neutral-800 text-white font-semibold rounded-lg hover:bg-neutral-700 transition-all duration-300 inline-flex items-center gap-2;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-neutral-800/50 rounded-lg border border-neutral-700 text-white focus:ring-2 focus:ring-yellow-400/50 focus:border-transparent transition-all duration-300;
+  }
+
+  .card {
+    @apply bg-neutral-800/50 rounded-xl border border-neutral-700 p-6 hover:border-yellow-400/50 transition-all duration-300;
+  }
+
+  .section-title {
+    @apply text-3xl font-bold text-white mb-8 relative;
+  }
+
+  .section-title::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-20 h-1 bg-yellow-400 rounded-full;
+  }
+}
+
+/* Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Hover Scale Effect */
+.hover-scale {
+  @apply transition-transform duration-300;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+/* Glass Effect */
+.glass {
+  @apply bg-neutral-800/50 backdrop-blur-sm border border-neutral-700;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  @apply w-6 h-6 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin;
+}
+
+/* Page Transition */
+.page-transition {
+  @apply transition-opacity duration-300;
+}
+
+.page-transition-enter {
+  opacity: 0;
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+}
+
+.page-transition-exit {
+  opacity: 1;
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+}
+
+/* Animation for UPI payment progress bar */
+@keyframes progress {
+  0% { width: 0%; }
+  50% { width: 70%; }
+  100% { width: 0%; }
+}
+
+.animate-progress {
+  animation: progress 3s ease-in-out infinite;
+}
+
+@keyframes borderColor {
+  0% {
+    border-color: #fbbf24; /* yellow-400 */
+  }
+  25% {
+    border-color: #f59e0b; /* yellow-500 */
+  }
+  50% {
+    border-color: #d97706; /* yellow-600 */
+  }
+  75% {
+    border-color: #b45309; /* yellow-700 */
+  }
+  100% {
+    border-color: #fbbf24; /* yellow-400 */
+  }
+}
+
+.animate-border {
+  animation: borderColor 2s linear infinite;
+}
+
+.animate-border-2 {
+  animation: borderColor 2s linear infinite;
+  animation-delay: 0.5s;
+}
+
+.animate-border-3 {
+  animation: borderColor 2s linear infinite;
+  animation-delay: 1s;
+}
