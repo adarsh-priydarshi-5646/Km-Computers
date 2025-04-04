@@ -30,7 +30,7 @@ const ExaminationPage = () => {
     password: ''
   });
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<number, string>>({});
   const [timeLeft, setTimeLeft] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [score, setScore] = useState(0);
@@ -117,11 +117,22 @@ const ExaminationPage = () => {
   };
 
   const handleAnswerSelect = (optionIndex: number) => {
-    if (currentQuestion !== null) {
-      setAnswers((prev) => ({
-        ...prev,
-        [currentQuestion]: optionIndex.toString(),
-      }));
+    if (currentQuestion !== null && selectedCourse) {
+      const selectedOptionText = selectedCourse.questions[currentQuestion].options[optionIndex];
+      const correctAnswer = selectedCourse.questions[currentQuestion].correctAnswer;
+      
+      console.log('Selected option:', selectedOptionText);
+      console.log('Selected index:', optionIndex);
+      console.log('Correct answer:', correctAnswer);
+      
+      setAnswers((prev) => {
+        const newAnswers = {
+          ...prev,
+          [currentQuestion]: selectedOptionText
+        };
+        console.log('Updated answers:', newAnswers);
+        return newAnswers;
+      });
     }
   };
 
@@ -136,23 +147,56 @@ const ExaminationPage = () => {
   const handleSubmit = () => {
     if (!selectedCourse) return;
     
-    const attemptedQuestions = Object.keys(answers).length;
-    const correctAnswers = Object.entries(answers).filter(([index, answer]) => 
-      answer === selectedCourse.questions[parseInt(index)].correctAnswer.toString()
-    ).length;
+    let correctAnswers = 0;
+    let wrongAnswers = 0;
+    let attemptedQuestions = 0;
+
+    console.log('All answers:', answers);
+    console.log('All questions:', selectedCourse.questions);
+
+    selectedCourse.questions.forEach((question, index) => {
+      const userAnswer = answers[index];
+      const correctAnswer = question.correctAnswer;
+      
+      console.log(`\nQuestion ${index + 1}:`);
+      console.log('Question:', question.question);
+      console.log('User answer:', userAnswer);
+      console.log('Correct answer:', correctAnswer);
+      
+      if (userAnswer !== undefined) {
+        attemptedQuestions++;
+        // Handle both index-based and text-based correct answers
+        const isCorrect = correctAnswer === userAnswer || 
+                         correctAnswer === question.options.indexOf(userAnswer).toString();
+        
+        if (isCorrect) {
+          console.log('✅ CORRECT!');
+          correctAnswers++;
+        } else {
+          console.log('❌ WRONG!');
+          wrongAnswers++;
+        }
+      }
+    });
+
+    console.log('\nFinal Results:');
+    console.log('Total correct:', correctAnswers);
+    console.log('Total wrong:', wrongAnswers);
+    console.log('Total attempted:', attemptedQuestions);
     
-    const wrongAnswers = attemptedQuestions - correctAnswers;
     const notAttempted = selectedCourse.questions.length - attemptedQuestions;
     const percentage = Math.round((correctAnswers / selectedCourse.questions.length) * 100);
     
-    setResults({
+    const results = {
       correct: correctAnswers,
       wrong: wrongAnswers,
       percentage: percentage,
       attempted: attemptedQuestions,
       notAttempted: notAttempted,
       markedForReview: markedQuestions.length
-    });
+    };
+
+    setResults(results);
     setScore(percentage);
     setExamCompleted(true);
     setExamStarted(false);
@@ -647,7 +691,7 @@ const ExaminationPage = () => {
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleAnswerSelect(index)}
                           className={`w-full text-left p-4 rounded-lg transition-colors ${
-                            answers[currentQuestion] === index.toString()
+                            answers[currentQuestion] === option
                               ? 'bg-yellow-400 text-neutral-900'
                               : 'bg-neutral-700 text-neutral-300 hover:bg-neutral-600'
                           }`}

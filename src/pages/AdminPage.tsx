@@ -114,12 +114,29 @@ export default function AdminPage() {
     setIsSubmitting(true);
 
     try {
+      // Create new laptop object with all required fields
       const laptop: Laptop = {
-        ...newLaptop as Laptop,
-        id: Date.now().toString()
+        id: Date.now().toString(),
+        model: newLaptop.model,
+        name: newLaptop.name,
+        price: newLaptop.price || 0,
+        image: newLaptop.image,
+        specs: {
+          processor: newLaptop.specs?.processor || '',
+          ram: newLaptop.specs?.ram || '',
+          storage: newLaptop.specs?.storage || '',
+          display: newLaptop.specs?.display || ''
+        }
       };
 
-      const updatedLaptops = [...laptops, laptop];
+      // Get existing laptops from localStorage
+      const existingLaptops = localStorage.getItem('laptops');
+      const parsedLaptops = existingLaptops ? JSON.parse(existingLaptops) : [];
+      
+      // Add new laptop to the array
+      const updatedLaptops = [...parsedLaptops, laptop];
+      
+      // Update state and localStorage
       setLaptops(updatedLaptops);
       localStorage.setItem('laptops', JSON.stringify(updatedLaptops));
       
@@ -140,6 +157,7 @@ export default function AdminPage() {
       
       toast.success('Laptop added successfully!');
     } catch (error) {
+      console.error('Error adding laptop:', error);
       toast.error('Failed to add laptop. Please try again.');
     } finally {
       setIsSubmitting(false);
