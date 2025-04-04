@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { Course, Question, initialCourses } from '../data/courses';
 import { loadCourses } from '../data/courses';
+import ReactConfetti from 'react-confetti';
 
 // Types
 interface StudentInfo {
@@ -46,7 +47,9 @@ const ExaminationPage = () => {
     percentage: 0,
     attempted: 0,
     notAttempted: 0,
-    markedForReview: 0
+    markedForReview: 0,
+    totalMarks: 0,
+    maxPossibleMarks: 0
   });
   const [markedQuestions, setMarkedQuestions] = useState<number[]>([]);
   const [showReview, setShowReview] = useState(false);
@@ -73,6 +76,12 @@ const ExaminationPage = () => {
     timeSpent: 0,
     averageTimePerQuestion: 0
   });
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [windowSize, setWindowSize] = useState({
+    width: window.innerWidth,
+    height: window.innerHeight,
+  });
+  const [randomizedQuestions, setRandomizedQuestions] = useState<Question[]>([]);
 
   // Load courses from localStorage on component mount
   useEffect(() => {
@@ -98,8 +107,45 @@ const ExaminationPage = () => {
     return () => clearInterval(timer);
   }, [examStarted, timeLeft]);
 
+  // Add window resize handler
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Add function to shuffle array
+  const shuffleArray = (array: any[]) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Modify handleCourseSelect to randomize questions and options
   const handleCourseSelect = (course: Course) => {
-    setSelectedCourse(course);
+    const randomizedQs = course.questions.map(question => {
+      const options = shuffleArray(question.options);
+      const correctAnswerIndex = options.indexOf(question.correctAnswer);
+      return {
+        ...question,
+        options,
+        correctAnswer: correctAnswerIndex.toString()
+      };
+    });
+    setRandomizedQuestions(randomizedQs);
+    setSelectedCourse({
+      ...course,
+      questions: randomizedQs
+    });
     setShowInstructions(true);
   };
 
@@ -150,6 +196,7 @@ const ExaminationPage = () => {
     let correctAnswers = 0;
     let wrongAnswers = 0;
     let attemptedQuestions = 0;
+    let totalMarks = 0;
 
     console.log('All answers:', answers);
     console.log('All questions:', selectedCourse.questions);
@@ -165,13 +212,13 @@ const ExaminationPage = () => {
       
       if (userAnswer !== undefined) {
         attemptedQuestions++;
-        // Handle both index-based and text-based correct answers
         const isCorrect = correctAnswer === userAnswer || 
                          correctAnswer === question.options.indexOf(userAnswer).toString();
         
         if (isCorrect) {
           console.log('✅ CORRECT!');
           correctAnswers++;
+          totalMarks += 4; // Add 4 marks for each correct answer
         } else {
           console.log('❌ WRONG!');
           wrongAnswers++;
@@ -183,9 +230,11 @@ const ExaminationPage = () => {
     console.log('Total correct:', correctAnswers);
     console.log('Total wrong:', wrongAnswers);
     console.log('Total attempted:', attemptedQuestions);
+    console.log('Total marks:', totalMarks);
     
     const notAttempted = selectedCourse.questions.length - attemptedQuestions;
     const percentage = Math.round((correctAnswers / selectedCourse.questions.length) * 100);
+    const maxPossibleMarks = selectedCourse.questions.length * 4;
     
     const results = {
       correct: correctAnswers,
@@ -193,7 +242,9 @@ const ExaminationPage = () => {
       percentage: percentage,
       attempted: attemptedQuestions,
       notAttempted: notAttempted,
-      markedForReview: markedQuestions.length
+      markedForReview: markedQuestions.length,
+      totalMarks: totalMarks,
+      maxPossibleMarks: maxPossibleMarks
     };
 
     setResults(results);
@@ -201,8 +252,11 @@ const ExaminationPage = () => {
     setExamCompleted(true);
     setExamStarted(false);
     
+    // Show confetti if passed
     if (percentage >= 70) {
       setShowCertificate(true);
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 8000);
     }
   };
 
@@ -344,6 +398,15 @@ const ExaminationPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0D0D0D] to-[#3A1C71]">
+      {showConfetti && (
+        <ReactConfetti
+          width={windowSize.width}
+          height={windowSize.height}
+          numberOfPieces={500}
+          recycle={false}
+          colors={['#FFD700', '#FFA500', '#FF69B4', '#00FF00', '#FF0000', '#4169E1']}
+        />
+      )}
       {/* Hero Section */}
       <div className="relative min-h-[35vh] flex items-center justify-center pt-24">
         <div className="absolute inset-0">
@@ -797,11 +860,19 @@ const ExaminationPage = () => {
                       <span className="text-neutral-300">Correct Answers</span>
                       <span className="text-green-400">{results.correct}</span>
                     </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-neutral-300">Total Marks Obtained</span>
+                      <span className="text-yellow-400 font-bold">{results.totalMarks} / {results.maxPossibleMarks}</span>
+                    </div>
                   </div>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-neutral-300">Wrong Answers</span>
                       <span className="text-red-400">{results.wrong}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-neutral-300">Marks per Question</span>
+                      <span className="text-yellow-400">4</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-neutral-300">Percentage Score</span>
